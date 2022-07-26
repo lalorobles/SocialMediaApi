@@ -41,7 +41,10 @@ namespace SocialMedia.Api
 
             services.AddDbContext<SocialMediaContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().AddNewtonsoftJson(opt =>
+            services.AddControllers(opt =>
+            {
+                opt.Filters.Add<GlobalExceptionFilter>();
+            }).AddNewtonsoftJson(opt =>
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             })
