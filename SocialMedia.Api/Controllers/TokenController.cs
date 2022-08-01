@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SocialMedia.Api.Responses;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +29,14 @@ namespace SocialMedia.Api.Controllers
             _passwordService = passwordService;
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Retrive a Token by valid User Credentials
+        /// </summary>
+        /// <param name="userLogin"></param>
+        /// <returns></returns>
+        [HttpPost (Name = nameof(Authentication))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(string))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Authentication(UserLogin userLogin)
         {
             //if its a valid user

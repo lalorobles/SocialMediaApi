@@ -31,7 +31,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieve all posts
+        /// Retrieve all Posts
         /// </summary>
         /// <param name="filters">Filters to apply</param>
         /// <returns></returns>
@@ -63,8 +63,13 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
+        /// <summary>
+        /// Retrieve Post by id
+        /// </summary>
+        /// <param name="id">Post Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}", Name = (nameof(Get)))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<PostDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Get(int id)
         {
@@ -74,8 +79,16 @@ namespace SocialMedia.Api.Controllers
             var response = new ApiResponse<PostDto>(postDto);
             return Ok(response);
         }
-        [HttpPost]
-        public async Task<IActionResult> Post(PostDto postDto)
+
+        /// <summary>
+        /// Create new Post
+        /// </summary>
+        /// <param name="postDto">Post</param>
+        /// <returns></returns>
+        [HttpPost(Name = nameof(Post))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<PostDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Post([FromBody]PostDto postDto)
         {
             var post = _mapper.Map<Post>(postDto);
             await _postService.InsertPost(post);
@@ -84,7 +97,16 @@ namespace SocialMedia.Api.Controllers
             var response = new ApiResponse<PostDto>(postDto);
             return Ok(response);
         }
-        [HttpPut("{id}")]
+
+        /// <summary>
+        /// Update a Post.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="postDto"></param>
+        /// <returns></returns>
+        [HttpPut("{id}", Name = nameof(Put))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Put(int id, PostDto postDto)
         {
             var post = _mapper.Map<Post>(postDto);
@@ -94,7 +116,15 @@ namespace SocialMedia.Api.Controllers
             var response = new ApiResponse<bool>(result);
             return Ok(response);
         }
-        [HttpDelete("{id}")]
+
+        /// <summary>
+        /// Delete a Post
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}", Name = nameof(Delete))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _postService.DeletePost(id);

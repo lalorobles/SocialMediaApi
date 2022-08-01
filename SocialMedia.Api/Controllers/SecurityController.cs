@@ -7,6 +7,7 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Enumerations;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
@@ -28,8 +29,15 @@ namespace SocialMedia.Api.Controllers
             _passwordService = passwordService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(SecurityDto securityDto)
+        /// <summary>
+        /// Create a new User.
+        /// </summary>
+        /// <param name="securityDto"></param>
+        /// <returns></returns>
+        [HttpPost(Name = nameof(PostUser))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<SecurityDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PostUser(SecurityDto securityDto)
         {
             var security = _mapper.Map<Security>(securityDto);
             security.Password = _passwordService.Hash(security.Password);
