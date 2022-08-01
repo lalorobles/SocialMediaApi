@@ -63,6 +63,22 @@ namespace SocialMedia.Core.Services
         }
         public async Task<bool> UpdatePost(Post post)
         {
+            var existingPost = await _unitOfWork.PostRepository.GetById(post.Id);
+            existingPost.Image = post.Image;
+            existingPost.Description = post.Description;
+
+            if (post.Description.Contains("sexo"))
+            {
+                throw new BusinessException("Content not allowed");
+            }
+            var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
+            if (userPosts.Count() < 10)
+            {
+                var lastPost = userPosts.OrderByDescending(x => x.Date).FirstOrDefault();
+                if ((DateTime.Now - lastPost.Date).TotalDays < 7)
+                    throw new BusinessException("You are not able to publish the post");
+            }
+
             _unitOfWork.PostRepository.Update(post);
             await _unitOfWork.SaveChangesAsync();
             return true;
@@ -71,6 +87,7 @@ namespace SocialMedia.Core.Services
         public async Task<bool> DeletePost(int id)
         {
             await _unitOfWork.PostRepository.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
             return true;
         }
     }

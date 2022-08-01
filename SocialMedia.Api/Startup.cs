@@ -13,6 +13,7 @@ using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
+using SocialMedia.Infrastructure.Extensions;
 using SocialMedia.Infrastructure.Filters;
 using SocialMedia.Infrastructure.Interfaces;
 using SocialMedia.Infrastructure.Options;
@@ -37,30 +38,16 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddTransient<IPostRepository, PostRepository>();
-            //services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<ISecurityService, SecurityService>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<IPasswordService, PasswordService>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddSingleton<IUriService>(provider =>
-            {
-                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accesor.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                return new UriService(absoluteUri);
-            });
+            //Services trhow extension method.
+            services.AddServices();
+            services.AddOptions(Configuration);
+            services.AddDbContexts(Configuration);
+            services.AddJwtAuthentication(Configuration);
+            services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            //Services trhow extension method.
 
-            //create singleton class by mapping values form appseting section
-            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOptions"));
-
-            services.AddDbContext<SocialMediaContext>(opt =>
-             opt.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"))
-            //opt.UseMySql(Configuration.GetConnectionString("MariaDbConnection"))
-            );
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddControllers(opt =>
             {
                 opt.Filters.Add<GlobalExceptionFilter>();
@@ -72,34 +59,6 @@ namespace SocialMedia.Api
             .ConfigureApiBehaviorOptions(opt =>
             {
                 //opt.SuppressModelStateInvalidFilter = true;
-            });
-            
-            // Swagger configuration
-            services.AddSwaggerGen(doc =>
-            {
-                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Media API", Version = "v1" });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                doc.IncludeXmlComments(xmlPath);
-            });
-
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Authentication:Issuer"],
-                    ValidAudience = Configuration["Authentication:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
-                };
             });
 
             services.AddMvc(opt =>
