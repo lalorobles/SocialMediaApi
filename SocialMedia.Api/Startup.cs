@@ -39,6 +39,7 @@ namespace SocialMedia.Api
             //services.AddTransient<IPostRepository, PostRepository>();
             //services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<ISecurityService, SecurityService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddSingleton<IUriService>(provider =>
@@ -52,7 +53,10 @@ namespace SocialMedia.Api
             //create singleton class by mapping values form appseting section
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
 
-            services.AddDbContext<SocialMediaContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<SocialMediaContext>(opt =>
+             opt.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"))
+            //opt.UseMySql(Configuration.GetConnectionString("MariaDbConnection"))
+            );
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers(opt =>
             {

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.DTOs;
@@ -9,8 +8,6 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
-using SocialMedia.Infrastructure.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;

@@ -6,9 +6,10 @@ namespace SocialMedia.Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        IPostRepository postRepository { get; }
-        IRepository<User> userRepository { get; }
-        IRepository<Comment> commentRepository { get; }
+        IPostRepository PostRepository { get; }
+        IRepository<User> UserRepository { get; }
+        IRepository<Comment> CommentRepository { get; }
+        ISecurityRepository SecurityRepository { get; }
         void SaveChanges();
         Task SaveChangesAsync();
     }
