@@ -15,6 +15,7 @@ using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
 using SocialMedia.Infrastructure.Filters;
 using SocialMedia.Infrastructure.Interfaces;
+using SocialMedia.Infrastructure.Options;
 using SocialMedia.Infrastructure.Repositories;
 using SocialMedia.Infrastructure.Services;
 using System;
@@ -41,6 +42,7 @@ namespace SocialMedia.Api
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IPasswordService, PasswordService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddSingleton<IUriService>(provider =>
             {
@@ -52,6 +54,7 @@ namespace SocialMedia.Api
 
             //create singleton class by mapping values form appseting section
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
+            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOptions"));
 
             services.AddDbContext<SocialMediaContext>(opt =>
              opt.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"))

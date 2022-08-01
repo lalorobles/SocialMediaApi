@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,11 +18,13 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
+        private readonly IPasswordService _passwordService;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService)
         {
             _configuration = configuration;
             _securityService = securityService;
+            _passwordService = passwordService;
         }
 
         [HttpPost]
@@ -41,6 +44,9 @@ namespace SocialMedia.Api.Controllers
         private async Task<(bool,Security)> IsValidUser(UserLogin userLogin)
         {
             var user = await _securityService.GetLoginByCredentials(userLogin);
+
+            _passwordService.Check(user.Password, userLogin.Password);
+
             return (user!=null,user);
         }
 
