@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,6 +50,21 @@ namespace SocialMedia.Infrastructure.Data.Configurations
 
             builder.Property(e => e.IsActive)
                .HasColumnName("Activo");
+
+            builder.Property(e => e.Password)
+             .HasColumnName("Contrasena")
+             .IsRequired()
+             .HasMaxLength(200)
+             .IsUnicode(false);
+
+            builder.Property(e => e.Role)
+              .HasColumnName("Rol")
+              .IsRequired()
+              .HasMaxLength(15)
+              .HasConversion(
+              x => x.ToString(),
+              x => (RoleType)Enum.Parse(typeof(RoleType), x)
+              );
         }
     }
 }

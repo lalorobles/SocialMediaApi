@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SocialMedia.Core.Enumerations;
+using System;
 using System.Collections.Generic;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
@@ -21,6 +22,8 @@ namespace SocialMedia.Core.Entities
         public DateTime DateOfBirth { get; set; }
         public string Telephone { get; set; }
         public bool IsActive { get; set; }
+        public string Password { get; set; }
+        public RoleType Role { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Post> Posts { get; set; }

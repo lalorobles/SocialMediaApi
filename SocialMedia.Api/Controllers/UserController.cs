@@ -15,16 +15,16 @@ namespace SocialMedia.Api.Controllers
     [Produces("Application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = nameof(RoleType.Administrator))]
-    public class SecurityController : ControllerBase
+    //[Authorize(Roles = nameof(RoleType.Administrator))]
+    public class UserController : ControllerBase
     {
-        private readonly ISecurityService _securityService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IPasswordService _passwordService;
 
-        public SecurityController(ISecurityService securityService, IMapper mapper, IPasswordService passwordService)
+        public UserController(IUserService userService, IMapper mapper, IPasswordService passwordService)
         {
-            _securityService = securityService;
+            _userService = userService;
             _mapper = mapper; 
             _passwordService = passwordService;
         }
@@ -32,20 +32,20 @@ namespace SocialMedia.Api.Controllers
         /// <summary>
         /// Create a new User.
         /// </summary>
-        /// <param name="securityDto"></param>
+        /// <param name="userDto"></param>
         /// <returns></returns>
         [HttpPost(Name = nameof(PostUser))]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<SecurityDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<UserDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostUser(SecurityDto securityDto)
+        public async Task<IActionResult> PostUser(UserDto userDto)
         {
-            var security = _mapper.Map<Security>(securityDto);
-            security.Password = _passwordService.Hash(security.Password);
+            var user = _mapper.Map<User>(userDto);
+            user.Password = _passwordService.Hash(user.Password);
 
-            await _securityService.RegisterUser(security);
+            await _userService.RegisterUser(user);
 
-            securityDto = _mapper.Map<SecurityDto>(security);
-            var response = new ApiResponse<SecurityDto>(securityDto);
+            userDto = _mapper.Map<UserDto>(user);
+            var response = new ApiResponse<UserDto>(userDto);
             return Ok(response);
         }
     }

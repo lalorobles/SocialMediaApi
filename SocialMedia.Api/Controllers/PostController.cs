@@ -9,7 +9,9 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
@@ -40,6 +42,13 @@ namespace SocialMedia.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetAll([FromQuery]PostQueryFilter filters)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                // get UserId from token.
+                var x = claims.ElementAt(0).Value;
+            }
             var posts = _postService.GetPosts(filters);
             var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts); 
 
@@ -90,6 +99,7 @@ namespace SocialMedia.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Post([FromBody]PostDto postDto)
         {
+           
             var post = _mapper.Map<Post>(postDto);
             await _postService.InsertPost(post);
 

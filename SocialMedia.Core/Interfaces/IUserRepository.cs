@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Interfaces
 {
-    public interface IUserRepository
-    {
-        Task<User> GetUser(int id);
-        Task<IEnumerable<User>> GetUsers();
+    public interface IUserRepository : IRepository<User>
+    { 
+        Task<User> GetLoginByCredentials(UserLogin login);
     }
 }

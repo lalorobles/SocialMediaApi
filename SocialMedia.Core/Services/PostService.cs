@@ -44,7 +44,7 @@ namespace SocialMedia.Core.Services
             var user = await _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null)
             {
-                throw new BusinessException("User doesn't exist");
+                throw new BusinessException("Email doesn't exist");
             }
             if (post.Description.Contains("sexo"))
             {

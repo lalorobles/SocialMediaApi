@@ -48,7 +48,7 @@ namespace SocialMedia.Infrastructure.Extensions
             //services.AddTransient<IPostRepository, PostRepository>();
             //services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IPasswordService, PasswordService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
